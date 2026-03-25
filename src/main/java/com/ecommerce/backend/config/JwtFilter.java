@@ -4,11 +4,12 @@ import com.ecommerce.backend.util.JwtUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 
 @Component
 public class JwtFilter implements Filter {
@@ -28,19 +29,23 @@ public class JwtFilter implements Filter {
             if (JwtUtil.validateToken(token)) {
 
                 String email = JwtUtil.extractEmail(token);
+                String role = JwtUtil.extractRole(token);
 
-                // 🔥 THIS IS THE IMPORTANT PART
+                // 🔥 IMPORTANT FIX
+                if (role == null || role.isEmpty()) {
+                    throw new RuntimeException("Role missing in token");
+                }
+
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
-                                email, null, Collections.emptyList()
+                                email,
+                                null,
+                                List.of(new SimpleGrantedAuthority(role)) // ✅ FIXED
                         );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
-                System.out.println("Authenticated user: " + email);
-
-            } else {
-                throw new RuntimeException("Invalid Token");
+                System.out.println("Authenticated user: " + email + " Role: " + role);
             }
         }
 
