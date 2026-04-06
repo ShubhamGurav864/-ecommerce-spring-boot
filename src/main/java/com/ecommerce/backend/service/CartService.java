@@ -100,7 +100,7 @@ public class CartService {
                 .build();
     }
    
-    // ❌ REMOVE / DECREASE ITEM
+    // REMOVE / DECREASE ITEM
     // ==============================
     public void removeFromCart(Long productId, Integer quantity) {
 
