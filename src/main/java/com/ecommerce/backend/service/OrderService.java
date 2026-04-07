@@ -1,6 +1,7 @@
 package com.ecommerce.backend.service;
 
 import com.ecommerce.backend.entity.*;
+import com.ecommerce.backend.enums.PaymentStatus;
 import com.ecommerce.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,7 +39,8 @@ public class OrderService {
         // 4️⃣ Create Order
         Order order = Order.builder()
                 .user(user)
-                .status("PLACED") // 👉 Later we will convert to ENUM
+                .status("PLACED")
+                .paymentStatus(PaymentStatus.PENDING)
                 .totalAmount(BigDecimal.ZERO)
                 .items(new ArrayList<>())
                 .build();
@@ -77,6 +79,7 @@ public class OrderService {
 
         // 8️⃣ Clear cart (important)
         cart.getItems().clear();
+        cartRepository.save(cart);
 
         return savedOrder;
     }

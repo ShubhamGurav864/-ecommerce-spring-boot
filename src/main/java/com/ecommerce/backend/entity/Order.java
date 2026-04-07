@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ecommerce.backend.enums.PaymentMethod;
+import com.ecommerce.backend.enums.PaymentStatus;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -43,8 +45,30 @@ public class Order {
     private BigDecimal totalAmount;
 
     // 📅 Order time
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // 🧾 Status (we'll expand later)
+    // 🧾 Order status
     private String status;
+
+    // 💳 Payment status
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentStatus paymentStatus;
+
+    // 💳 Payment method
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
+    // 💳 Gateway details
+    @Column(columnDefinition = "TEXT")
+    private String paymentId;  // Stripe/Razorpay ID
+    
+    @Column(columnDefinition = "TEXT")
+    private String paymentUrl;  // redirect URL
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

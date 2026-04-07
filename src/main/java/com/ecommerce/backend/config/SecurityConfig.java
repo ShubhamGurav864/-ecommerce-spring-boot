@@ -32,6 +32,8 @@ public class SecurityConfig {
                 // Public: login and register
                 .requestMatchers("/auth/**").permitAll()
 
+                .requestMatchers("/api/payment/webhook/stripe").permitAll()
+
                 // Public: browsing products (GET only)
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
 
