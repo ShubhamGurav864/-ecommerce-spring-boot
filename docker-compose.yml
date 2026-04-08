@@ -2,19 +2,20 @@ version: '3.8'
 
 services:
 
-  mysql:
-    image: mysql:8.0
-    container_name: ecommerce_mysql
+  postgres:
+    image: postgres:16-alpine
+    container_name: ecommerce_postgres
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root123
-      MYSQL_DATABASE: ecommerce_db
+      POSTGRES_PASSWORD: root123
+      POSTGRES_DB: ecommerce_db
+      POSTGRES_USER: root
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "pg_isready -U root -d ecommerce_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,10 +27,10 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
     env_file:
       - .env
 
 volumes:
-  mysql_data:
+  postgres_data:
