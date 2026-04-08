@@ -67,6 +67,8 @@ public class Order {
     @Column(columnDefinition = "TEXT")
     private String paymentUrl;  // redirect URL
 
+    private String razorpayOrderId;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

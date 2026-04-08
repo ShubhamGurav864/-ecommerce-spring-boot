@@ -14,4 +14,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     // 💳 Find order by Stripe payment/session ID
     Optional<Order> findByPaymentId(String paymentId);
+
+    Optional<Order> findByRazorpayOrderId(String razorpayOrderId);
 }
