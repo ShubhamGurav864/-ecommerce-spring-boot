@@ -30,7 +30,7 @@ public class SecurityConfig {
                 ).permitAll()
 
                 // Public: login and register
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
 
                 .requestMatchers("/api/payment/webhook/stripe").permitAll()
 
