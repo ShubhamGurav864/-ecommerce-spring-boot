@@ -22,27 +22,29 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
 
-                // Swagger - PUBLIC
+                // 1. Swagger & Documentation - PUBLIC
                 .requestMatchers(
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html"
                 ).permitAll()
 
-                // Public: login and register
+                // 2. Authentication & Webhooks - PUBLIC
                 .requestMatchers("/api/auth/**").permitAll()
-
                 .requestMatchers("/api/payment/webhook/stripe").permitAll()
 
-                // Public: browsing products (GET only)
+                // 3. Admin Product Management - ADMIN ONLY
+                // Note: hasRole("ADMIN") looks for "ROLE_ADMIN" authority
+                .requestMatchers("/api/products/admin/**").hasRole("ADMIN")
+
+                // 4. Browsing Products - PUBLIC (Only GET requests)
+                // This must come AFTER the admin path to avoid intercepting it
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
 
-                // Admin only: create, update, delete products
-                .requestMatchers("/api/products/admin/**").hasAuthority("ROLE_ADMIN")
-
-                // Everything else: any valid token (user or admin)
+                // 5. All other requests (e.g., /api/orders, /api/user/profile)
                 .anyRequest().authenticated()
             )
+            // Add your JWT filter before the standard authentication filter
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
